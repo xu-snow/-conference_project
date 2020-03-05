@@ -1,5 +1,5 @@
 import { Tooltip, Tag } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
 import React from 'react';
 import { connect } from 'dva';
 import { ConnectProps, ConnectState } from '@/models/connect';
@@ -29,8 +29,9 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
   }
 
   return (
-    <div className={className}>
-      <HeaderSearch
+    <div className={className} style={{ paddingRight: 50 }}>
+
+      {/* <HeaderSearch
         className={`${styles.action} ${styles.search}`}
         placeholder="站内搜索"
         defaultValue="umi ui"
@@ -52,8 +53,8 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
         // onSearch={value => {
         //   //console.log('input', value);
         // }}
-      />
-      <Tooltip title="使用文档">
+      /> */}
+      {/* <Tooltip title="使用文档">
         <a
           target="_blank"
           href="https://pro.ant.design/docs/getting-started"
@@ -69,7 +70,11 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
           <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>
         </span>
       )}
-      <SelectLang className={styles.action} />
+      <SelectLang className={styles.action} /> */}
+      <Tooltip title="暂不支持">
+        <UserOutlined style={{ fontSize: 22 }} ></UserOutlined>
+      </Tooltip>
+
     </div>
   );
 };

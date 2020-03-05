@@ -3,9 +3,10 @@ import { Effect } from 'dva';
 import { stringify } from 'querystring';
 import { router } from 'umi';
 
-import { fakeAccountLogin,AccountLogin } from '@/services/login';
+import { fakeAccountLogin, AccountLogin } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import { message } from 'antd';
 
 export interface StateType {
   status?: 'ok' | 'error';
@@ -35,10 +36,12 @@ const Model: LoginModelType = {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(AccountLogin, payload);
+
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
+
       // Login successfully
       if (response.status === 0) {
         const urlParams = new URL(window.location.href);
@@ -57,6 +60,8 @@ const Model: LoginModelType = {
           }
         }
         router.replace(redirect || '/');
+      } else {
+        message.error('登录失败')
       }
     },
 

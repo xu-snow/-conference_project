@@ -1,14 +1,20 @@
-import { Row, Col, List, Button, message, Card } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Row, Col, List, Button, message, Card, Empty } from 'antd';
+import { PlusOutlined, SettingOutlined, EditOutlined, EllipsisOutlined, LinkOutlined, CodeSandboxOutlined } from '@ant-design/icons';
 import React, { useState, useRef, useEffect } from 'react';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { GET_ALL_CONFERENCE, GET_ALL_CONFERENCES_TOPIC, ADD_CONFERENCES_TOPIC, UPDATE_CONFERENCES_TOPIC } from '@/gql/conference'
 import CreateForm from '../ListTableList/components/CreateForm';
-import UpdateForm from '../ListTableList/components/UpdateForm';
 import { TopicListItem } from './data.d'
 
 
+export interface ITopicData {
+  conferencesTopic?: {
+    edges: any[]
+  }
+}
+
+const { Meta } = Card;
 
 const SectionPage: React.FC<{}> = () => {
   return <Card>
@@ -20,8 +26,9 @@ const SectionPage: React.FC<{}> = () => {
   </Card>
 }
 
+
 function LeftPgae() {
-  const { loading, error, data = {}, refetch } = useQuery(GET_ALL_CONFERENCES_TOPIC());
+  const { loading, error, data = {}, refetch } = useQuery<ITopicData>(GET_ALL_CONFERENCES_TOPIC());
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [updateDate, handleUpdateDate] = useState<TopicListItem | undefined>(undefined);
   const [update] = useMutation(UPDATE_CONFERENCES_TOPIC, {
@@ -82,7 +89,41 @@ function LeftPgae() {
       }
 
     </CreateForm>
-    <List<TopicListItem>
+
+    {
+      !edges.length ? <Empty> <AddItem {...{ refetch }} /></Empty> : <div style={{ overflow: 'hidden' }}>
+        主题列表
+      <div style={{ float: 'right' }}>
+          <AddItem {...{ refetch }} />
+        </div>
+      </div>
+    }
+    {
+      edges.map(item => item.node).map(item => {
+
+        return <Card
+          style={{ marginTop: 16 }}
+          actions={[
+            <SettingOutlined key="setting" />,
+            <EditOutlined key="edit" onClick={() => {
+              handleUpdateDate(item)
+              handleUpdateModalVisible(true);
+            }} />,
+            <EllipsisOutlined key="ellipsis" />,
+          ]}
+        >
+          <Meta
+            avatar={
+              <CodeSandboxOutlined style={{ fontSize: 36, marginTop: 12 ,color: '#45aed6' }} />
+            }
+            title={<span style={{ fontSize: 28 }}>{item.name}</span>}
+            description={item.description}
+          />
+        </Card>
+      })
+    }
+
+    {/* <List<TopicListItem>
       loading={loading}
       header={<AddItem {...{ refetch }}></AddItem>}
       split
@@ -102,7 +143,7 @@ function LeftPgae() {
 
       </List.Item>
       }
-    />
+    /> */}
   </div>
 }
 
@@ -136,16 +177,10 @@ const AddItem: React.FC<{ refetch: (data: any) => any }> = ({ refetch }) => {
   }
 
   return <>
-    <div style={{ overflow: 'hidden' }}>
-      主题列表
-      <div style={{ float: 'right' }}>
-        <Button type="primary" onClick={() => handleModalVisible(true)}>
-          <PlusOutlined />新建
+
+    <Button type="primary" onClick={() => handleModalVisible(true)}>
+      <PlusOutlined />新建
         </Button>
-      </div>
-
-    </div>
-
     <CreateForm title_v={'新建主题'} onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
       <ProTable<TopicListItem, TopicListItem>
         onSubmit={async value => {
