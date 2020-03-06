@@ -3,12 +3,13 @@ import request from '@/utils/request';
 import cookie from 'cookie'
 import { Reducer } from 'redux';
 
-import { queryCurrent, query as queryUsers } from '@/services/user';
+import { queryCurrent, query as queryUsers,queryChangePassword } from '@/services/user';
 
 export interface CurrentUser {
   is_authenticated: boolean;
   user: {
-    user: string
+    email: string
+    username:string
     name: ''
     date_of_enter: string
   } | null
@@ -24,10 +25,12 @@ export interface UserModelType {
   effects: {
     fetch: Effect;
     fetchCurrent: Effect;
+    changePassword: Effect;
   };
   reducers: {
     saveCurrentUser: Reducer<UserModelState>;
     changeNotifyCount: Reducer<UserModelState>;
+
   };
 }
 
@@ -60,6 +63,16 @@ const UserModel: UserModelType = {
         type: 'saveCurrentUser',
         payload: response,
       });
+    },
+    *changePassword({payload}, { call, put }) {
+      const response = yield call(queryChangePassword,payload);
+      // yield put({
+      //   type: 'save',
+      //   payload: response,
+      // });
+      if (response.status === 0) {
+
+      }
     },
   },
 

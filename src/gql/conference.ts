@@ -1,6 +1,6 @@
 import { gql } from 'apollo-boost'
 
-export const GET_ALL_CONFERENCE= ()=>gql`
+export const GET_ALL_CONFERENCE = () => gql`
 {
   conferences{
     edges {
@@ -14,8 +14,20 @@ export const GET_ALL_CONFERENCE= ()=>gql`
   }
 }`
 
+export interface ITopic {
+  id: string
+  name: string
+  description: string
+  createTime: string
+  creator:{
+    name:string
+    email:string
+    username:string
+  }
+}
 
-export const GET_ALL_CONFERENCES_TOPIC=()=>gql`
+
+export const GET_ALL_CONFERENCES_TOPIC = () => gql`
 {
   conferencesTopic {
     pageInfo {
@@ -30,6 +42,11 @@ export const GET_ALL_CONFERENCES_TOPIC=()=>gql`
         name
         description
         createTime
+        creator{
+          name
+          email
+          username
+        }
       }
       cursor
     }
@@ -37,7 +54,7 @@ export const GET_ALL_CONFERENCES_TOPIC=()=>gql`
 }
 `
 
-export const  ADD_CONFERENCES_TOPIC = gql`
+export const ADD_CONFERENCES_TOPIC = gql`
   mutation MutationConferencesTopic($name: String!,$description:String!) {
     conferenceTopic(input:{name: $name,description:$description}) {
       conferenceTopic {
@@ -45,6 +62,11 @@ export const  ADD_CONFERENCES_TOPIC = gql`
         name
         description
         createTime
+        creator{
+          name
+          email
+          username
+        }
       }
       errors {
         field
@@ -62,6 +84,11 @@ mutation MutationConferencesTopic($name: String!,$description:String!,$id:ID!) {
       name
       description
       createTime
+      creator{
+        name
+        email
+        username
+      }
     }
     errors {
       field

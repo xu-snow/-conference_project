@@ -1,5 +1,5 @@
 import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
-import { Alert, Checkbox } from 'antd';
+import { Alert, Checkbox,Form,Input } from 'antd';
 import React, { useState } from 'react';
 import { Dispatch, AnyAction } from 'redux';
 import { Link } from 'umi';

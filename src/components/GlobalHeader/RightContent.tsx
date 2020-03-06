@@ -1,11 +1,12 @@
-import { Tooltip, Tag } from 'antd';
-import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
+// import { Tooltip, Tag } from 'antd';
+// import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
 import React from 'react';
 import { connect } from 'dva';
 import { ConnectProps, ConnectState } from '@/models/connect';
-import Avatar from './AvatarDropdown';
-import HeaderSearch from '../HeaderSearch';
-import SelectLang from '../SelectLang';
+// import Avatar from './AvatarDropdown';
+// import HeaderSearch from '../HeaderSearch';
+// import SelectLang from '../SelectLang';
+import AccountMenu from '../AccountMenu'
 import styles from './index.less';
 
 export type SiderTheme = 'light' | 'dark';
@@ -71,9 +72,7 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
         </span>
       )}
       <SelectLang className={styles.action} /> */}
-      <Tooltip title="暂不支持">
-        <UserOutlined style={{ fontSize: 22 }} ></UserOutlined>
-      </Tooltip>
+      <AccountMenu />
 
     </div>
   );

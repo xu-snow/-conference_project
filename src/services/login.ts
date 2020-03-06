@@ -7,7 +7,6 @@ export interface LoginParamsType {
   // captcha: string;
 }
 
-export const API = REACT_APP_ENV?'/api':''
 
 export async function fakeAccountLogin(params: LoginParamsType) {
   return request('/api/login/account', {
@@ -17,12 +16,19 @@ export async function fakeAccountLogin(params: LoginParamsType) {
 }
 
 export async function AccountLogin(params: LoginParamsType) {
-  return request(`${API}/user/login/`, {
+  return request(`${API_ENV}/user/login/`, {
     method: 'POST',
     data: params,
     requestType:'form'
   });
 }
+
+export async function AccountLogout() {
+  return request(`${API_ENV}/user/logout/`, {
+    method: 'POST',
+  });
+}
+
 
 export async function getFakeCaptcha(mobile: string) {
   return request(`/api/login/captcha?mobile=${mobile}`);

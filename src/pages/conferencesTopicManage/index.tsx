@@ -2,11 +2,14 @@ import { Row, Col, List, Button, message, Card, Empty } from 'antd';
 import { PlusOutlined, SettingOutlined, EditOutlined, EllipsisOutlined, LinkOutlined, CodeSandboxOutlined } from '@ant-design/icons';
 import React, { useState, useRef, useEffect } from 'react';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import {CurrentUser} from '@/models/user'
+import { connect } from 'dva';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { GET_ALL_CONFERENCE, GET_ALL_CONFERENCES_TOPIC, ADD_CONFERENCES_TOPIC, UPDATE_CONFERENCES_TOPIC } from '@/gql/conference'
+import { GET_ALL_CONFERENCE, GET_ALL_CONFERENCES_TOPIC, ADD_CONFERENCES_TOPIC, UPDATE_CONFERENCES_TOPIC,ITopic } from '@/gql/conference'
 import CreateForm from '../ListTableList/components/CreateForm';
+import { ConnectProps, ConnectState, UserModelState } from '@/models/connect';
 import { TopicListItem } from './data.d'
-
+import styles from './style.less';
 
 export interface ITopicData {
   conferencesTopic?: {
@@ -14,30 +17,28 @@ export interface ITopicData {
   }
 }
 
+
 const { Meta } = Card;
 
 const SectionPage: React.FC<{}> = () => {
   return <Card>
     <Row gutter={12} >
       <Col span={24}>
-        <LeftPgae />
+        <LeftPgaeConnect />
       </Col>
     </Row>
   </Card>
 }
 
 
-function LeftPgae() {
+
+function LeftPgae({user}:{user:CurrentUser}) {
   const { loading, error, data = {}, refetch } = useQuery<ITopicData>(GET_ALL_CONFERENCES_TOPIC());
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [updateDate, handleUpdateDate] = useState<TopicListItem | undefined>(undefined);
   const [update] = useMutation(UPDATE_CONFERENCES_TOPIC, {
     onCompleted: refetch
   });
-  // if(loading || error){
-  //   return null
-  // }
-  // console.log(refetch)
   const columns: ProColumns<TopicListItem>[] = [
     {
       title: '主题名',
@@ -55,7 +56,7 @@ function LeftPgae() {
       valueType: 'textarea',
     },
   ]
-  const { conferencesTopic: { edges = [] } = {} } = data
+  const { conferencesTopic: { edges = [] } = {} }= data
 
 
   async function handle_update(value: TopicListItem) {
@@ -99,10 +100,14 @@ function LeftPgae() {
       </div>
     }
     {
-      edges.map(item => item.node).map(item => {
+      edges.map(item => item.node).sort((item1:ITopic,item2:ITopic)=>{
+        return new Date(item2.createTime).getTime()-new Date(item1.createTime).getTime()
+
+      }).map((item:ITopic) => {
 
         return <Card
-          style={{ marginTop: 16 }}
+          key={item.id}
+          style={{ marginTop: 16, border: '1px solid #eee' }}
           actions={[
             <SettingOutlined key="setting" />,
             <EditOutlined key="edit" onClick={() => {
@@ -114,10 +119,15 @@ function LeftPgae() {
         >
           <Meta
             avatar={
-              <CodeSandboxOutlined style={{ fontSize: 36, marginTop: 12 ,color: '#45aed6' }} />
+              <CodeSandboxOutlined style={{ fontSize: 36, marginTop: 12, color: '#45aed6' }} />
             }
             title={<span style={{ fontSize: 28 }}>{item.name}</span>}
-            description={item.description}
+            description={<span>
+              <div className={styles.create_time}>--{`${item.creator?item.creator.username+', ':''}`}{new Date(item.createTime).toLocaleString() }</div>
+              <div>{item.description}</div>
+
+            </span>
+            }
           />
         </Card>
       })
@@ -147,6 +157,10 @@ function LeftPgae() {
   </div>
 }
 
+
+const LeftPgaeConnect=connect(({ user }:ConnectState) => ({
+  user:user.currentUser
+}))(LeftPgae)
 
 const AddItem: React.FC<{ refetch: (data: any) => any }> = ({ refetch }) => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);

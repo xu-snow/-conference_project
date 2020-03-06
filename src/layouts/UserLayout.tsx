@@ -54,7 +54,7 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
                 {/* <span className={styles.title}>同花顺会议</span> */}
               </Link>
             </div>
-            <div className={styles.desc}>同花顺会议</div>
+            <div className={styles.desc}>知识图谱小组</div>
           </div>
           {children}
         </div>
